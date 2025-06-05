@@ -8,6 +8,7 @@ import Dashboard from './pages/dashboard/dashboard';
 import Login from './pages/login/login';
 import Home from './pages/homepage/homePage';
 import PrivateRoute from './helper/privateRoute';
+import Signup from './pages/signup/signup';
 
 const App = () => {
   const navigate = useNavigate();
@@ -51,6 +52,7 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
 
           <Route path="/dashboard" element={
             <PrivateRoute>

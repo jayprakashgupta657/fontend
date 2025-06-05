@@ -3,6 +3,17 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "description": "Your project description",
+  "author": {
+    "name": "Amrendra Chaurasia",
+    "email": "er.amrendra007@gmail.com",
+    "url": "https://amrendrachaurasia.com.np"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AmrendraOO7/react-vite-ui-demo.git"
+  },
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
