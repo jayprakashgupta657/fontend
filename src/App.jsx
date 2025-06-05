@@ -1,21 +1,119 @@
-import { useState } from 'react'
-import './App.css'
-import Header from "./components/header/header.jsx"
-import HomePage from './pages/homepage/homePage.jsx'
-import Footer from './components/footer/footer.jsx'
+import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import Footer from './components/Footer/Footer';
+import Navbar from './components/navbar/navbar';
+import About from './pages/about/about';
+import Contact from './pages/contact/contact';
+import Dashboard from './pages/dashboard/dashboard';
+import Login from './pages/login/login';
+import Home from './pages/homepage/homePage';
+import PrivateRoute from './helper/privateRoute';
 
+const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
 
-//Javascript
-function App() {
-  //javascript
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+    navigate('/dashboard');
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    navigate('/');
+  };
 
   return (
     <div className="app">
-      <Header />
-      <HomePage />
+      <Navbar isAuthenticated={isAuthenticated} handleLogout={handleLogout} />
+      <main className="main-content">
+        <Routes>
+          <Route path="/" element={< Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route
+            path="/login"
+            element={<Login setIsAuthenticated={handleLogin} />}
+          />
+          <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+        </Routes>
+      </main>
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
+
+// // Wrap App with Router in main.jsx or here
+// const AppWrapper = () => (
+
+//   <App />
+
+// );
+
+// export default AppWrapper;
+
+
+// import { useState } from 'react';
+// import Navbar from './components/navbar/navbar';
+// import Footer from './components/footer/footer';
+// import Home from './pages/homepage/homePage';
+// import About from './pages/about/about';
+// import Contact from './pages/contact/contact';
+// import Login from './pages/login/login';
+// import PrivateRoute from './helper/privateRoute';
+// import Dashboard from './pages/dashboard/dashboard';
+// import { Route, Router, Routes } from 'react-router-dom';
+// const App = () => {
+//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+//   return (
+//     <div className="app">
+//       <Navbar />
+//       <main className="main-content">
+//         <Routes>
+//           <Route path="/" element={<Home />} />
+//           <Route path="/about" element={<About />} />
+//           <Route path="/contact" element={<Contact />} />
+//           <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+//           <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
+//             <Route path="/dashboard" element={<Dashboard />} />
+//           </Route>
+//         </Routes>
+//       </main>
+//       <Footer />
+//     </div>
+//   );
+// };
+
+// export default App;
+
+
+
+
+
+
+
+// // import './App.css'
+// // import HomePage from './pages/homepage/homePage.jsx'
+// // import Footer from './components/footer/footer.jsx'
+// // import Navbar from './components/navbar/navbar.jsx'
+
+
+// // //Javascript
+// // function App() {
+// //   //javascript
+
+// //   return (
+// //     <div className="app">
+// //       <Navbar />
+// //       <HomePage />
+// //       <Footer />
+// //     </div>
+// //   )
+// // }
+
+// // export default App
