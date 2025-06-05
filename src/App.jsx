@@ -10,18 +10,37 @@ import Home from './pages/homepage/homePage';
 import PrivateRoute from './helper/privateRoute';
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-    navigate('/dashboard');
+  // In your App.jsx
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem('isAuthenticated') === 'true'
+  );
+
+  // Add a logout function
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    setIsAuthenticated(false);
+    navigate('/login');
   };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    navigate('/');
-  };
+  // const handleLogin = () => {
+  //   const storedAuth = localStorage.getItem('isAuthenticated');
+  //   if (storedAuth === 'true') {
+  //     setIsAuthenticated(true);
+  //     navigate('/dashboard');
+  //   }
+  //   else {
+  //     setIsAuthenticated(false);
+  //     navigate('/login');
+  //   }
+  // };
+
+  // const handleLogout = () => {
+  //   localStorage.removeItem('isAuthenticated');
+  //   setIsAuthenticated(false);
+  //   navigate('/');
+  // };
 
   return (
     <div className="app">
@@ -31,13 +50,18 @@ const App = () => {
           <Route path="/" element={< Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route
-            path="/login"
-            element={<Login setIsAuthenticated={handleLogin} />}
-          />
-          <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
+          <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+
+          <Route path="/dashboard" element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          } />
+
+
+          {/* <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
             <Route path="/dashboard" element={<Dashboard />} />
-          </Route>
+          </Route> */}
         </Routes>
       </main>
       <Footer />

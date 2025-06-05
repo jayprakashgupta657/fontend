@@ -10,11 +10,19 @@ const Login = ({ setIsAuthenticated }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
         // Simple authentication logic
         if (username === 'admin' && password === 'password') {
-            setIsAuthenticated();
+            // 1. Set in localStorage
+            localStorage.setItem('isAuthenticated', 'true');
+
+            // 2. Update state in parent component
+            setIsAuthenticated(true);
+
+            // 3. Navigate to dashboard
             navigate('/dashboard');
         } else {
+            console.error('Invalid credentials');
             setError('Invalid credentials');
         }
     };
