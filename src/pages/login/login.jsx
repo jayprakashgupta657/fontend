@@ -1,23 +1,35 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
+import axios from 'axios';
+import { baseUrl } from '../../helper/common';
 
 const Login = ({ setIsAuthenticated }) => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
 
         try {
+            // 1. Fetch email and password from form database with help of email
+            const body = {
+                email: email,
+                password: password
+            }
+            let auth = await axios.post(`${baseUrl}/authUser/login`, body);
+            const userData = auth.data.user;
+
+            // 2. Validate email and password
             // Simple authentication logic
-            if (username === 'admin' && password === 'password') {
+            if (userData) {
                 // 1. Set in localStorage
                 localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('userData', JSON.stringify(userData));
 
                 // 2. Update state in parent component
                 setIsAuthenticated(true);
@@ -49,11 +61,11 @@ const Login = ({ setIsAuthenticated }) => {
 
                 <form onSubmit={handleSubmit}>
                     <div>
-                        <label>Username:</label>
+                        <label>Email:</label>
                         <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                     </div>

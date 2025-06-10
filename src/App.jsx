@@ -21,6 +21,7 @@ const App = () => {
   // Add a logout function
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userData'); // Clear user data if needed`
     setIsAuthenticated(false);
     navigate('/login');
   };
