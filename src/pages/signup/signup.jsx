@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './Signup.css';
+import '../../styles/auth.css';
 
 const Signup = ({ setIsAuthenticated }) => {
     const [formData, setFormData] = useState({
@@ -11,6 +11,49 @@ const Signup = ({ setIsAuthenticated }) => {
     });
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [passwordStrength, setPasswordStrength] = useState({
+        score: 0,
+        message: '',
+        color: '#e0e0e0'
+    });
+
+    const checkPasswordStrength = (password) => {
+        let score = 0;
+        let message = '';
+        let color = '#e0e0e0';
+
+        if (password.length >= 8) score++;
+        if (password.match(/[a-z]/) && password.match(/[A-Z]/)) score++;
+        if (password.match(/\d/)) score++;
+        if (password.match(/[^a-zA-Z\d]/)) score++;
+
+        switch (score) {
+            case 0:
+                message = 'Very Weak';
+                color = '#ff4444';
+                break;
+            case 1:
+                message = 'Weak';
+                color = '#ffbb33';
+                break;
+            case 2:
+                message = 'Fair';
+                color = '#ffbb33';
+                break;
+            case 3:
+                message = 'Good';
+                color = '#00C851';
+                break;
+            case 4:
+                message = 'Strong';
+                color = '#007E33';
+                break;
+            default:
+                message = '';
+        }
+
+        setPasswordStrength({ score, message, color });
+    };
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -19,6 +62,7 @@ const Signup = ({ setIsAuthenticated }) => {
             ...formData,
             [name]: value
         });
+        
         // Clear error when user types
         if (errors[name]) {
             setErrors({
@@ -26,28 +70,44 @@ const Signup = ({ setIsAuthenticated }) => {
                 [name]: null
             });
         }
+
+        // Check password strength when password field changes
+        if (name === 'password') {
+            checkPasswordStrength(value);
+        }
     };
 
     const validateForm = () => {
         const newErrors = {};
 
+        // Name validation
         if (!formData.name.trim()) {
             newErrors.name = 'Name is required';
+        } else if (formData.name.trim().length < 2) {
+            newErrors.name = 'Name must be at least 2 characters';
         }
 
+        // Email validation
         if (!formData.email.trim()) {
             newErrors.email = 'Email is required';
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = 'Email is invalid';
+            newErrors.email = 'Please enter a valid email address';
         }
 
+        // Password validation
         if (!formData.password) {
             newErrors.password = 'Password is required';
-        } else if (formData.password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters';
+        } else {
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!passwordRegex.test(formData.password)) {
+                newErrors.password = 'Password must be at least 8 characters and include uppercase, lowercase, number and special character';
+            }
         }
 
-        if (formData.password !== formData.confirmPassword) {
+        // Confirm password validation
+        if (!formData.confirmPassword) {
+            newErrors.confirmPassword = 'Please confirm your password';
+        } else if (formData.password !== formData.confirmPassword) {
             newErrors.confirmPassword = 'Passwords do not match';
         }
 
@@ -104,8 +164,8 @@ const Signup = ({ setIsAuthenticated }) => {
     };
 
     return (
-        <div className="signup-container">
-            <div className="signup-card">
+        <div className="auth-page">
+            <div className="auth-container">
                 <h2>Create Your Account</h2>
                 <p className="subtitle">Join our community today</p>
 
@@ -150,8 +210,26 @@ const Signup = ({ setIsAuthenticated }) => {
                             onChange={handleChange}
                             className={errors.password ? 'error' : ''}
                             required
-                            minLength="6"
+                            minLength="8"
                         />
+                        {formData.password && (
+                            <div className="password-strength">
+                                <div className="strength-bar">
+                                    {[...Array(4)].map((_, index) => (
+                                        <div
+                                            key={index}
+                                            className="strength-segment"
+                                            style={{
+                                                backgroundColor: index < passwordStrength.score ? passwordStrength.color : '#e0e0e0'
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                                <span className="strength-text" style={{ color: passwordStrength.color }}>
+                                    {passwordStrength.message}
+                                </span>
+                            </div>
+                        )}
                         {errors.password && <span className="error-text">{errors.password}</span>}
                     </div>
 
@@ -173,7 +251,7 @@ const Signup = ({ setIsAuthenticated }) => {
 
                     <button
                         type="submit"
-                        className="signup-button"
+                        className="auth-button"
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? (

@@ -8,7 +8,6 @@ const Dashboard = () => {
     const [orders, setOrders] = useState([]);
     const [products, setProducts] = useState([]);
     const [deleteConfirm, setDeleteConfirm] = useState(null);
-    const [selectedProducts, setSelectedProducts] = useState([]);
     const [stats, setStats] = useState({
         totalOrders: 0,
         totalSpent: 0,
@@ -31,32 +30,22 @@ const Dashboard = () => {
 
     const handleDeleteProduct = async (productId) => {
         try {
-            const isMultiple = productId === 'batch';
-            const idsToDelete = isMultiple ? selectedProducts : [productId];
-            
-            // Delete all selected products
-            let result = await Promise.all(idsToDelete.map(id => 
-                fetch(`/products/delete/${id}`, { method: 'DELETE' })
-            ));
-            
-            if (!result.every(res => res.ok)) {
-                throw new Error('Failed to delete one or more products');
+            const response = await fetch(`/products/${productId}`, {
+                method: 'DELETE',
+            });
+            if (response.ok) {
+                setProducts(products.filter(p => p.id !== productId));
+                setDeleteConfirm(null);
+                // Show success message
+                const successMessage = document.createElement('div');
+                successMessage.className = 'success-message';
+                successMessage.textContent = 'Product deleted successfully!';
+                document.body.appendChild(successMessage);
+                setTimeout(() => successMessage.remove(), 2000);
             }
-
-            // Update products list
-            setProducts(products.filter(p => !idsToDelete.includes(p.id)));
-            setDeleteConfirm(null);
-            setSelectedProducts([]);
-
-            // Show success message
-            const successMessage = document.createElement('div');
-            successMessage.className = 'success-message';
-            successMessage.textContent = `${isMultiple ? 'Selected products' : 'Product'} deleted successfully!`;
-            document.body.appendChild(successMessage);
-            setTimeout(() => successMessage.remove(), 2000);
         } catch (err) {
-            console.error('Error deleting product(s):', err);
-            alert('Failed to delete product(s)');
+            console.error('Error deleting product:', err);
+            alert('Failed to delete product');
         }
     };
 
@@ -147,19 +136,14 @@ const Dashboard = () => {
                             <button className="view-all-btn" onClick={() => navigate('/products')}>
                                 <i className="fas fa-eye"></i> View All Products
                             </button>
-                            <button 
-                                className="remove-products-btn" 
-                                onClick={() => setDeleteConfirm('batch')}
-                                disabled={products.length === 0}
-                            >
-                                <i className="fas fa-trash-alt"></i> Remove Products
+                            <button className="add-product-btn" onClick={() => navigate('/products')}>
+                                <i className="fas fa-plus"></i> Add New Product
                             </button>
                         </div>
                     </div>
                     
                     <div className="products-table">
                         <div className="table-header">
-                            <span>Select</span>
                             <span>Product</span>
                             <span>Category</span>
                             <span>Price</span>
@@ -168,19 +152,6 @@ const Dashboard = () => {
                         <div className="table-body">
                             {products.slice(0, 5).map(product => (
                                 <div key={product.id} className="table-row">
-                                    <div className="checkbox-cell">
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedProducts.includes(product.id)}
-                                            onChange={(e) => {
-                                                if (e.target.checked) {
-                                                    setSelectedProducts([...selectedProducts, product.id]);
-                                                } else {
-                                                    setSelectedProducts(selectedProducts.filter(id => id !== product.id));
-                                                }
-                                            }}
-                                        />
-                                    </div>
                                     <div className="product-cell">
                                         <img src={product.image} alt={product.name} />
                                         <span>{product.name}</span>
@@ -237,32 +208,17 @@ const Dashboard = () => {
                 <div className="delete-confirmation-overlay">
                     <div className="delete-confirmation">
                         <h3><i className="fas fa-exclamation-triangle"></i> Confirm Delete</h3>
-                        <p>
-                            {deleteConfirm === 'batch' ? (
-                                selectedProducts.length > 0 ?
-                                    `Are you sure you want to delete ${selectedProducts.length} selected product(s)? This action cannot be undone.` :
-                                    'Please select products to delete first.'
-                            ) : (
-                                'Are you sure you want to delete this product? This action cannot be undone.'
-                            )}
-                        </p>
+                        <p>Are you sure you want to delete this product? This action cannot be undone.</p>
                         <div className="confirmation-actions">
                             <button 
                                 className="confirm-delete"
                                 onClick={() => handleDeleteProduct(deleteConfirm)}
-                                disabled={deleteConfirm === 'batch' && selectedProducts.length === 0}
                             >
                                 <i className="fas fa-trash"></i> Delete
-                                {deleteConfirm === 'batch' && selectedProducts.length > 0 && ` (${selectedProducts.length})`}
                             </button>
                             <button 
                                 className="cancel-delete"
-                                onClick={() => {
-                                    setDeleteConfirm(null);
-                                    if (deleteConfirm === 'batch') {
-                                        setSelectedProducts([]);
-                                    }
-                                }}
+                                onClick={() => setDeleteConfirm(null)}
                             >
                                 <i className="fas fa-times"></i> Cancel
                             </button>

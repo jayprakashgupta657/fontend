@@ -9,9 +9,14 @@ import Login from './pages/login/login';
 import Home from './pages/homepage/homePage';
 import PrivateRoute from './helper/privateRoute';
 import Signup from './pages/signup/signup';
+import Products from './products/products';
+import Cart from './components/cart';
+import PurchaseBillForm from './components/billing/PurchaseBillForm';
+import PurchaseDetails from './components/billing/PurchaseDetails';
 
 const App = () => {
   const navigate = useNavigate();
+
 
   // In your App.jsx
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -25,6 +30,7 @@ const App = () => {
     setIsAuthenticated(false);
     navigate('/login');
   };
+   
 
   // const handleLogin = () => {
   //   const storedAuth = localStorage.getItem('isAuthenticated');
@@ -50,6 +56,7 @@ const App = () => {
       <main className="main-content">
         <Routes>
           <Route path="/" element={< Home />} />
+          <Route path="products" element={<Products />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
@@ -61,6 +68,23 @@ const App = () => {
             </PrivateRoute>
           } />
 
+              <Route path="/cart" element={
+            <PrivateRoute>
+              <Cart />
+            </PrivateRoute>
+          } />
+
+          <Route path="/billing" element={
+            <PrivateRoute>
+              <PurchaseBillForm />
+            </PrivateRoute>
+          } />
+
+          <Route path="/purchase-details" element={
+            <PrivateRoute>
+              <PurchaseDetails />
+            </PrivateRoute>
+          } />
 
           {/* <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
             <Route path="/dashboard" element={<Dashboard />} />

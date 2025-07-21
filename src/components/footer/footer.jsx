@@ -5,7 +5,8 @@ const Footer = () => {
         <>
             <footer className="footer">
                 <div className="footer-content">
-                    <p>&copy; {new Date().getFullYear()} MyApp. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} Handicraft Marketplace
+                        . All rights reserved.</p>
                     <div className="social-links">
                         <a href="#">Twitter</a>
                         <a href="#">Facebook</a>

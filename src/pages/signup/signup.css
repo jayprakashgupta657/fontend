@@ -1,19 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
 .signup-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f8fafc;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     padding: 2rem;
+    font-family: 'Poppins', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+.signup-container::before,
+.signup-container::after {
+    content: '';
+    position: absolute;
+    width: 1000px;
+    height: 1000px;
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.signup-container::before {
+    background: linear-gradient(220.55deg, #FF8570 0%, #FD267A 100%);
+    top: -10%;
+    right: 45%;
+    opacity: 0.2;
+    animation: floatBubble 20s linear infinite;
+}
+
+.signup-container::after {
+    background: linear-gradient(220.55deg, #667eea 0%, #764ba2 100%);
+    bottom: -10%;
+    left: 45%;
+    opacity: 0.15;
+    animation: floatBubble 25s linear infinite reverse;
+}
+
+@keyframes floatBubble {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    100% {
+        transform: translateY(-50px) rotate(360deg);
+    }
 }
 
 .signup-card {
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    padding: 3rem;
     width: 100%;
-    max-width: 28rem;
+    max-width: 500px;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .signup-card h2 {
@@ -60,6 +105,30 @@
 
 .form-group input.error {
     border-color: #ef4444;
+}
+
+.password-strength {
+    margin-top: 0.5rem;
+}
+
+.strength-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.strength-segment {
+    height: 4px;
+    flex: 1;
+    background-color: #e0e0e0;
+    border-radius: 2px;
+    transition: background-color 0.3s ease;
+}
+
+.strength-text {
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
 }
 
 .error-text {
