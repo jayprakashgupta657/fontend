@@ -61,9 +61,19 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        // Fetch user data
+        // Fetch user data from localStorage
         const storedUserData = localStorage.getItem('userData');
-        if (storedUserData) setUserData(JSON.parse(storedUserData));
+        if (storedUserData) {
+            try {
+                const parsedData = JSON.parse(storedUserData);
+                console.log('User data from storage:', parsedData);
+                setUserData(parsedData);
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+            }
+        } else {
+            console.log('No user data found in localStorage');
+        }
         
         // Get cart items
         const cart = JSON.parse(localStorage.getItem('cart') || '[]');
